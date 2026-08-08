@@ -9,3 +9,4 @@ export const createUser = (user: User) => {
   users.push(user);
   return user;
 };
+
