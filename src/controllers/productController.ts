@@ -1,20 +1,9 @@
 import type { Request, Response } from "express";
-
-let products = [
-  {
-    id: 1,
-    name: "iPhone 16",
-    price: 85000,
-  },
-  {
-    id: 2,
-    name: "Samsung Galaxy S25",
-    price: 72000,
-  },
-];
+import * as productService from "../services/productService.js";
 
 // GET /products
 export const getProducts = (req: Request, res: Response) => {
+  const products = productService.getProducts();
   res.json(products);
 };
 
@@ -22,7 +11,7 @@ export const getProducts = (req: Request, res: Response) => {
 export const getProductById = (req: Request, res: Response) => {
   const id = Number(req.params.id);
 
-  const product = products.find((p) => p.id === id);
+  const product = productService.getProduct(id);
 
   if (!product) {
     return res.status(404).json({
@@ -43,13 +32,7 @@ export const createProduct = (req: Request, res: Response) => {
     });
   }
 
-  const newProduct = {
-    id: products.length + 1,
-    name,
-    price,
-  };
-
-  products.push(newProduct);
+  const newProduct = productService.createProduct(name, price);
 
   res.status(201).json(newProduct);
 };
@@ -57,28 +40,24 @@ export const createProduct = (req: Request, res: Response) => {
 // PUT /products/:id
 export const updateProduct = (req: Request, res: Response) => {
   const id = Number(req.params.id);
-
   const { name, price } = req.body;
 
-  const product = products.find((p) => p.id === id);
+  const updatedProduct = productService.updateProduct(id, name, price);
 
-  if (!product) {
+  if (!updatedProduct) {
     return res.status(404).json({
       message: "Product not found",
     });
   }
 
-  product.name = name;
-  product.price = price;
-
-  res.json(product);
+  res.json(updatedProduct);
 };
 
 // DELETE /products/:id
 export const deleteProduct = (req: Request, res: Response) => {
   const id = Number(req.params.id);
 
-  products = products.filter((p) => p.id !== id);
+  productService.deleteProduct(id);
 
   res.json({
     message: "Product deleted successfully",
