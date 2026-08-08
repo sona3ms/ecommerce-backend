@@ -53,8 +53,9 @@ export const login = async (req: Request, res: Response) => {
 
   const { password: _password, ...userWithoutPassword } = user;
 
-  return res.status(200).json({
-    message: "Login successful",
-    user: userWithoutPassword,
-  });
+return res.status(200).json({
+  message: "Login successful",
+  token: result.token,
+  user: userWithoutPassword,
+});
 };

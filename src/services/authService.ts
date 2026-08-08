@@ -1,5 +1,6 @@
 import * as authRepository from "../repositories/authRepository.js";
 import bcrypt from "bcrypt";
+import { generateToken } from "../utils/jwt.js";
 
 export const register = async (
   name: string,
@@ -57,8 +58,11 @@ export const login = async (
     };
   }
 
-  return {
-    success: true,
-    user,
-  };
+  const token = generateToken(user.id, user.email);
+
+return {
+  success: true,
+  user,
+  token,
+};
 };
