@@ -4,6 +4,14 @@ import swaggerUi from "swagger-ui-express";
 import homeRouter from "./routes/homeRoutes.js";
 import productRouter from "./routes/productRoutes.js";
 import swaggerDocument from "./swagger.js";
+<<<<<<< Updated upstream
+=======
+import authRoutes from "./routes/authRoutes.js";
+import cartRoutes from "./routes/cartRoutes.js";
+import addressRoutes from "./routes/addressRoutes.js";
+import couponRoutes from "./routes/couponRoutes.js";
+
+>>>>>>> Stashed changes
 
 const app = express();
 
@@ -13,5 +21,8 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(homeRouter);
 app.use(productRouter);
+app.use("/cart", cartRoutes);
+app.use("/addresses", addressRoutes);
+app.use("/coupons", couponRoutes);
 
 export default app;
