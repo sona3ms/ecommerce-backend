@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import * as authService from "../services/authService.js";
+import { verifyToken } from "../utils/jwt.js";
 
 // POST /auth/register
 export const register = async (req: Request, res: Response) => {
@@ -58,4 +59,30 @@ return res.status(200).json({
   token: result.token,
   user: userWithoutPassword,
 });
+};
+
+export const getProfile = (req: Request, res: Response) => {
+  const authHeader = req.headers.authorization!;
+
+  const token = authHeader.split(" ")[1];
+
+  if (!token) {
+    return res.status(401).json({
+      message: "Invalid authorization header",
+    });
+  }
+
+  const decoded = verifyToken(token);
+
+  const user = authService.getProfile(decoded.id);
+
+  if (!user) {
+    return res.status(404).json({
+      message: "User not found",
+    });
+  }
+
+  const { password: _, ...userWithoutPassword } = user;
+
+  return res.json(userWithoutPassword);
 };

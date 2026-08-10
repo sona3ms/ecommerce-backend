@@ -66,3 +66,6 @@ return {
   token,
 };
 };
+export const getProfile = (id: number) => {
+  return authRepository.findUserById(id);
+};
