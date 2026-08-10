@@ -1,5 +1,5 @@
 import { users } from "../data/users.js";
-import type { User } from "../types/user.js";
+import type { User } from "../types/user.ts";
 
 export const findUserByEmail = (email: string) => {
   return users.find((user) => user.email === email);
