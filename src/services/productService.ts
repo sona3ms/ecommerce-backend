@@ -1,38 +1,50 @@
 import * as productRepository from "../repositories/productRepository.js";
 
-export const getProducts = () => {
-  return productRepository.getAllProducts();
+export const getProducts = async () => {
+  return await productRepository.getAllProducts();
 };
 
-export const getProduct = (id: number) => {
-  return productRepository.getProductById(id);
+export const getProduct = async (id: number) => {
+  return await productRepository.getProductById(id);
 };
 
-export const createProduct = (name: string, price: number) => {
-  const products = productRepository.getAllProducts();
+export const createProduct = async (
+  name: string,
+  price: number
+) => {
+  const products =
+    await productRepository.getAllProducts();
 
   const newProduct = {
-    id: products.length + 1,
+    id:
+      products.length > 0
+        ? Math.max(...products.map((p) => p.id)) + 1
+        : 1,
     name,
     price,
   };
 
-  productRepository.createProduct(newProduct);
-
-  return newProduct;
+  return await productRepository.createProduct(
+    newProduct
+  );
 };
 
-export const updateProduct = (
+export const updateProduct = async (
   id: number,
   name: string,
   price: number
 ) => {
-  return productRepository.updateProduct(id, {
-    name,
-    price,
-  });
+  return await productRepository.updateProduct(
+    id,
+    {
+      name,
+      price,
+    }
+  );
 };
 
-export const deleteProduct = (id: number) => {
-  productRepository.deleteProduct(id);
+export const deleteProduct = async (
+  id: number
+) => {
+  return await productRepository.deleteProduct(id);
 };

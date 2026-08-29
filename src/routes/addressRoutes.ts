@@ -1,4 +1,5 @@
 import { Router } from "express";
+
 import {
   getAddresses,
   addAddress,
@@ -6,14 +7,24 @@ import {
   deleteAddress,
 } from "../controllers/addressController.js";
 
+import { authenticate } from "../middleware/authMiddleware.js";
+
 const router = Router();
 
-router.get("/", getAddresses);
+router.get("/", authenticate, getAddresses);
 
-router.post("/", addAddress);
+router.post("/", authenticate, addAddress);
 
-router.put("/:id", updateAddress);
+router.put(
+  "/:id",
+  authenticate,
+  updateAddress
+);
 
-router.delete("/:id", deleteAddress);
+router.delete(
+  "/:id",
+  authenticate,
+  deleteAddress
+);
 
 export default router;

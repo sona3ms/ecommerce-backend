@@ -1,18 +1,30 @@
 import type { Request, Response } from "express";
+
 import * as addressService from "../services/addressService.js";
 
-export const getAddresses = (
+export const getAddresses = async (
   req: Request,
   res: Response
 ) => {
-  res.json(addressService.getAddresses());
+  const userId = (req as any).user.id;
+
+  const addresses =
+    await addressService.getAddresses(userId);
+
+  res.json(addresses);
 };
 
-export const addAddress = (
+export const addAddress = async (
   req: Request,
   res: Response
 ) => {
-  const address = addressService.addAddress(req.body);
+  const userId = (req as any).user.id;
+
+  const address =
+    await addressService.addAddress(
+      userId,
+      req.body
+    );
 
   res.status(201).json({
     message: "Address added successfully",
@@ -20,16 +32,19 @@ export const addAddress = (
   });
 };
 
-export const updateAddress = (
+export const updateAddress = async (
   req: Request,
   res: Response
 ) => {
+  const userId = (req as any).user.id;
   const id = Number(req.params.id);
 
-  const address = addressService.updateAddress(
-    id,
-    req.body
-  );
+  const address =
+    await addressService.updateAddress(
+      id,
+      userId,
+      req.body
+    );
 
   if (!address) {
     return res.status(404).json({
@@ -43,13 +58,18 @@ export const updateAddress = (
   });
 };
 
-export const deleteAddress = (
+export const deleteAddress = async (
   req: Request,
   res: Response
 ) => {
+  const userId = (req as any).user.id;
   const id = Number(req.params.id);
 
-  const deleted = addressService.deleteAddress(id);
+  const deleted =
+    await addressService.deleteAddress(
+      id,
+      userId
+    );
 
   if (!deleted) {
     return res.status(404).json({

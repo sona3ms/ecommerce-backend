@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 
 import * as checkoutService from "../services/checkoutService.js";
 
-export const checkout = (
+export const checkout = async (
   req: Request,
   res: Response
 ) => {
@@ -14,13 +14,19 @@ export const checkout = (
     });
   }
 
-  const result = checkoutService.checkout(
-    Number(addressId),
-    couponCode
-  );
+  const userId = (req as any).user.id;
+
+  const result =
+    await checkoutService.checkout(
+      userId,
+      Number(addressId),
+      couponCode
+    );
 
   if (!result.success) {
-    if (result.message === "Address not found") {
+    if (
+      result.message === "Address not found"
+    ) {
       return res.status(404).json(result);
     }
 

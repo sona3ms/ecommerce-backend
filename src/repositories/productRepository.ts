@@ -1,44 +1,97 @@
-type Product = {
-  id: number;
-  name: string;
-  price: number;
+import { pool } from "../config/database.js";
+
+import type { Product } from "../types/product.js";
+
+export const getAllProducts = async (): Promise<Product[]> => {
+  const result = await pool.query(
+    `
+    SELECT id, name, price
+    FROM products
+    ORDER BY id
+    `
+  );
+
+  return result.rows;
 };
 
-let products: Product[] = [
-  {
-    id: 1,
-    name: "iPhone 16",
-    price: 85000,
-  },
-  {
-    id: 2,
-    name: "Samsung Galaxy S25",
-    price: 72000,
-  },
-];
+export const getProductById = async (
+  id: number
+): Promise<Product | undefined> => {
+  const result = await pool.query(
+    `
+    SELECT id, name, price
+    FROM products
+    WHERE id = $1
+    `,
+    [id]
+  );
 
-export const getAllProducts = () => products;
-
-export const getProductById = (id: number) =>
-  products.find((p) => p.id === id);
-
-export const createProduct = (product: Product) => {
-  products.push(product);
+  return result.rows[0];
 };
 
-export const updateProduct = (
+export const createProduct = async (
+  product: Product
+): Promise<Product> => {
+  const result = await pool.query(
+    `
+    INSERT INTO products (
+      id,
+      name,
+      price
+    )
+    VALUES ($1, $2, $3)
+    RETURNING id, name, price
+    `,
+    [
+      product.id,
+      product.name,
+      product.price,
+    ]
+  );
+
+  return result.rows[0];
+};
+
+export const updateProduct = async (
   id: number,
   updatedProduct: Partial<Product>
-) => {
-  const product = products.find((p) => p.id === id);
+): Promise<Product | null> => {
+  const current = await getProductById(id);
 
-  if (!product) return null;
+  if (!current) {
+    return null;
+  }
 
-  Object.assign(product, updatedProduct);
+  const name =
+    updatedProduct.name ?? current.name;
 
-  return product;
+  const price =
+    updatedProduct.price ?? current.price;
+
+  const result = await pool.query(
+    `
+    UPDATE products
+    SET name = $1,
+        price = $2
+    WHERE id = $3
+    RETURNING id, name, price
+    `,
+    [name, price, id]
+  );
+
+  return result.rows[0] ?? null;
 };
 
-export const deleteProduct = (id: number) => {
-  products = products.filter((p) => p.id !== id);
+export const deleteProduct = async (
+  id: number
+): Promise<boolean> => {
+  const result = await pool.query(
+    `
+    DELETE FROM products
+    WHERE id = $1
+    `,
+    [id]
+  );
+
+  return result.rowCount === 1;
 };

@@ -1,13 +1,19 @@
 import * as orderRepository from "../repositories/orderRepository.js";
 
-export const getOrders = () => {
-  return orderRepository.getOrders();
+export const getOrders = async (
+  userId: number
+) => {
+  return await orderRepository.getOrders(
+    userId
+  );
 };
 
-export const getOrderById = (id: number) => {
-  const orders = orderRepository.getOrders();
-
-  return orders.find(
-    (order) => order.id === id
+export const getOrderById = async (
+  id: number,
+  userId: number
+) => {
+  return await orderRepository.getOrderById(
+    id,
+    userId
   );
 };

@@ -1,17 +1,27 @@
 import type { Request, Response } from "express";
+
 import * as productService from "../services/productService.js";
 
 // GET /products
-export const getProducts = (req: Request, res: Response) => {
-  const products = productService.getProducts();
+export const getProducts = async (
+  req: Request,
+  res: Response
+) => {
+  const products =
+    await productService.getProducts();
+
   res.json(products);
 };
 
 // GET /products/:id
-export const getProductById = (req: Request, res: Response) => {
+export const getProductById = async (
+  req: Request,
+  res: Response
+) => {
   const id = Number(req.params.id);
 
-  const product = productService.getProduct(id);
+  const product =
+    await productService.getProduct(id);
 
   if (!product) {
     return res.status(404).json({
@@ -23,26 +33,48 @@ export const getProductById = (req: Request, res: Response) => {
 };
 
 // POST /products
-export const createProduct = (req: Request, res: Response) => {
+export const createProduct = async (
+  req: Request,
+  res: Response
+) => {
   const { name, price } = req.body;
 
-  if (!name || !price) {
+  if (!name || price === undefined) {
     return res.status(400).json({
       message: "Name and price are required",
     });
   }
 
-  const newProduct = productService.createProduct(name, price);
+  const newProduct =
+    await productService.createProduct(
+      name,
+      Number(price)
+    );
 
   res.status(201).json(newProduct);
 };
 
 // PUT /products/:id
-export const updateProduct = (req: Request, res: Response) => {
+export const updateProduct = async (
+  req: Request,
+  res: Response
+) => {
   const id = Number(req.params.id);
+
   const { name, price } = req.body;
 
-  const updatedProduct = productService.updateProduct(id, name, price);
+  if (!name || price === undefined) {
+    return res.status(400).json({
+      message: "Name and price are required",
+    });
+  }
+
+  const updatedProduct =
+    await productService.updateProduct(
+      id,
+      name,
+      Number(price)
+    );
 
   if (!updatedProduct) {
     return res.status(404).json({
@@ -54,10 +86,20 @@ export const updateProduct = (req: Request, res: Response) => {
 };
 
 // DELETE /products/:id
-export const deleteProduct = (req: Request, res: Response) => {
+export const deleteProduct = async (
+  req: Request,
+  res: Response
+) => {
   const id = Number(req.params.id);
 
-  productService.deleteProduct(id);
+  const deleted =
+    await productService.deleteProduct(id);
+
+  if (!deleted) {
+    return res.status(404).json({
+      message: "Product not found",
+    });
+  }
 
   res.json({
     message: "Product deleted successfully",

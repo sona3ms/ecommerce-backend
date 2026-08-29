@@ -4,11 +4,13 @@ import * as orderRepository from "../repositories/orderRepository.js";
 
 import type { Order } from "../types/order.js";
 
-export const checkout = (
+export const checkout = async (
+  userId: number,
   addressId: number,
   couponCode?: string
 ) => {
-  const cart = cartRepository.getCart();
+  const cart =
+    await cartRepository.getCart(userId);
 
   // Check cart
   if (cart.items.length === 0) {
@@ -18,9 +20,12 @@ export const checkout = (
     };
   }
 
-  // Check address
+  // Check address belongs to logged-in user
   const address =
-    addressRepository.getAddressById(addressId);
+    await addressRepository.getAddressById(
+      addressId,
+      userId
+    );
 
   if (!address) {
     return {
@@ -40,7 +45,9 @@ export const checkout = (
   let discount = 0;
 
   if (couponCode) {
-    if (couponCode.toUpperCase() !== "SAVE10") {
+    if (
+      couponCode.toUpperCase() !== "SAVE10"
+    ) {
       return {
         success: false,
         message: "Invalid coupon",
@@ -48,6 +55,9 @@ export const checkout = (
     }
 
     discount = subtotal * 0.1;
+  } else if (cart.discount > 0) {
+    // Use discount already stored in the cart
+    discount = cart.discount;
   }
 
   // Delivery is currently free
@@ -61,32 +71,21 @@ export const checkout = (
 
   const order: Order = {
     id: Date.now(),
-
+    userId,
     items: [...cart.items],
-
     address,
-
     subtotal,
-
     discount,
-
     deliveryCharge,
-
     total,
-
     status: "confirmed",
-
     createdAt: new Date(),
   };
 
-  orderRepository.createOrder(order);
+  await orderRepository.createOrder(order);
 
-  // Clear cart after successful checkout
- cart.items = [];
-cart.subtotal = 0;
-cart.discount = 0;
-
-delete cart.couponCode;
+  // Clear the PostgreSQL cart
+  await cartRepository.clearCart(userId);
 
   return {
     success: true,

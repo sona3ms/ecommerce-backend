@@ -61,7 +61,10 @@ return res.status(200).json({
 });
 };
 
-export const getProfile = (req: Request, res: Response) => {
+export const getProfile = async (
+  req: Request,
+  res: Response
+) => {
   const authHeader = req.headers.authorization!;
 
   const token = authHeader.split(" ")[1];
@@ -74,8 +77,8 @@ export const getProfile = (req: Request, res: Response) => {
 
   const decoded = verifyToken(token);
 
-  const user = authService.getProfile(decoded.id);
-
+const user =
+  await authService.getProfile(decoded.id);
   if (!user) {
     return res.status(404).json({
       message: "User not found",

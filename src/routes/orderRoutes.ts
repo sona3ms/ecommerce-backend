@@ -5,10 +5,20 @@ import {
   getOrderById,
 } from "../controllers/orderController.js";
 
+import { authenticate } from "../middleware/authMiddleware.js";
+
 const router = Router();
 
-router.get("/", getOrders);
+router.get(
+  "/",
+  authenticate,
+  getOrders
+);
 
-router.get("/:id", getOrderById);
+router.get(
+  "/:id",
+  authenticate,
+  getOrderById
+);
 
 export default router;

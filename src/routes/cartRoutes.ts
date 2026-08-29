@@ -1,4 +1,5 @@
 import { Router } from "express";
+
 import {
   getCart,
   addToCart,
@@ -6,14 +7,32 @@ import {
   removeItem,
 } from "../controllers/cartController.js";
 
+import { authenticate } from "../middleware/authMiddleware.js";
+
 const router = Router();
 
-router.get("/", getCart);
+router.get(
+  "/",
+  authenticate,
+  getCart
+);
 
-router.post("/add", addToCart);
+router.post(
+  "/add",
+  authenticate,
+  addToCart
+);
 
-router.put("/:productId", updateQuantity);
+router.put(
+  "/:productId",
+  authenticate,
+  updateQuantity
+);
 
-router.delete("/:productId", removeItem);
+router.delete(
+  "/:productId",
+  authenticate,
+  removeItem
+);
 
 export default router;

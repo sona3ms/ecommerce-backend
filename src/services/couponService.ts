@@ -1,7 +1,11 @@
 import * as cartRepository from "../repositories/cartRepository.js";
 
-export const applyCoupon = (code: string) => {
-  const cart = cartRepository.getCart();
+export const applyCoupon = async (
+  userId: number,
+  code: string
+) => {
+  const cart =
+    await cartRepository.getCart(userId);
 
   if (code.toUpperCase() !== "SAVE10") {
     return {
@@ -12,7 +16,8 @@ export const applyCoupon = (code: string) => {
 
   const discount = cart.subtotal * 0.1;
 
-  cartRepository.updateCoupon(
+  await cartRepository.updateCoupon(
+    userId,
     code.toUpperCase(),
     discount
   );

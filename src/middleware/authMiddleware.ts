@@ -27,6 +27,9 @@ export const authenticate = (
 
     console.log(decoded);
 
+    // Attach authenticated user to the request
+    (req as any).user = decoded;
+
     next();
   } catch {
     return res.status(401).json({

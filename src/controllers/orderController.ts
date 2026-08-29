@@ -2,23 +2,35 @@ import type { Request, Response } from "express";
 
 import * as orderService from "../services/orderService.js";
 
-export const getOrders = (
+export const getOrders = async (
   req: Request,
   res: Response
 ) => {
-  const orders = orderService.getOrders();
+  const userId = Number(
+    (req as any).user.id
+  );
+
+  const orders =
+    await orderService.getOrders(userId);
 
   return res.json(orders);
 };
 
-export const getOrderById = (
+export const getOrderById = async (
   req: Request,
   res: Response
 ) => {
+  const userId = Number(
+    (req as any).user.id
+  );
+
   const id = Number(req.params.id);
 
   const order =
-    orderService.getOrderById(id);
+    await orderService.getOrderById(
+      id,
+      userId
+    );
 
   if (!order) {
     return res.status(404).json({

@@ -7,16 +7,19 @@ export const register = async (
   email: string,
   password: string
 ) => {
-  const existingUser = authRepository.findUserByEmail(email);
+  const existingUser =
+    await authRepository.findUserByEmail(email);
 
   if (existingUser) {
     return {
       success: false,
-      message: "User with this email already exists",
+      message:
+        "User with this email already exists",
     };
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword =
+    await bcrypt.hash(password, 10);
 
   const newUser = {
     id: Date.now(),
@@ -25,7 +28,7 @@ export const register = async (
     password: hashedPassword,
   };
 
-  authRepository.createUser(newUser);
+  await authRepository.createUser(newUser);
 
   return {
     success: true,
@@ -37,7 +40,8 @@ export const login = async (
   email: string,
   password: string
 ) => {
-  const user = authRepository.findUserByEmail(email);
+  const user =
+    await authRepository.findUserByEmail(email);
 
   if (!user) {
     return {
@@ -46,10 +50,11 @@ export const login = async (
     };
   }
 
-  const isPasswordCorrect = await bcrypt.compare(
-    password,
-    user.password
-  );
+  const isPasswordCorrect =
+    await bcrypt.compare(
+      password,
+      user.password
+    );
 
   if (!isPasswordCorrect) {
     return {
@@ -58,14 +63,20 @@ export const login = async (
     };
   }
 
-  const token = generateToken(user.id, user.email);
+  const token = generateToken(
+    user.id,
+    user.email
+  );
 
-return {
-  success: true,
-  user,
-  token,
+  return {
+    success: true,
+    user,
+    token,
+  };
 };
-};
-export const getProfile = (id: number) => {
-  return authRepository.findUserById(id);
+
+export const getProfile = async (
+  id: number
+) => {
+  return await authRepository.findUserById(id);
 };

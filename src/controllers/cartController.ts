@@ -1,11 +1,25 @@
 import type { Request, Response } from "express";
+
 import * as cartService from "../services/cartService.js";
 
-export const getCart = (req: Request, res: Response) => {
-  res.json(cartService.getCart());
+export const getCart = async (
+  req: Request,
+  res: Response
+) => {
+  const userId = Number((req as any).user.id);
+
+  const cart =
+    await cartService.getCart(userId);
+
+  res.json(cart);
 };
 
-export const addToCart = (req: Request, res: Response) => {
+export const addToCart = async (
+  req: Request,
+  res: Response
+) => {
+  const userId = Number((req as any).user.id);
+
   const { productId } = req.body;
 
   if (!productId) {
@@ -14,7 +28,11 @@ export const addToCart = (req: Request, res: Response) => {
     });
   }
 
-  const result = cartService.addToCart(productId);
+  const result =
+    await cartService.addToCart(
+      userId,
+      Number(productId)
+    );
 
   if (!result.success) {
     return res.status(404).json({
@@ -28,11 +46,30 @@ export const addToCart = (req: Request, res: Response) => {
   });
 };
 
-export const updateQuantity = (req: Request, res: Response) => {
-  const productId = Number(req.params.productId);
+export const updateQuantity = async (
+  req: Request,
+  res: Response
+) => {
+  const userId = Number((req as any).user.id);
+
+  const productId = Number(
+    req.params.productId
+  );
+
   const { quantity } = req.body;
 
-  const result = cartService.updateQuantity(productId, quantity);
+  if (!quantity || quantity < 1) {
+    return res.status(400).json({
+      message: "Quantity must be at least 1",
+    });
+  }
+
+  const result =
+    await cartService.updateQuantity(
+      userId,
+      productId,
+      Number(quantity)
+    );
 
   if (!result.success) {
     return res.status(404).json({
@@ -43,10 +80,21 @@ export const updateQuantity = (req: Request, res: Response) => {
   return res.json(result);
 };
 
-export const removeItem = (req: Request, res: Response) => {
-  const productId = Number(req.params.productId);
+export const removeItem = async (
+  req: Request,
+  res: Response
+) => {
+  const userId = Number((req as any).user.id);
 
-  const result = cartService.removeItem(productId);
+  const productId = Number(
+    req.params.productId
+  );
+
+  const result =
+    await cartService.removeItem(
+      userId,
+      productId
+    );
 
   return res.json(result);
 };
