@@ -3,7 +3,7 @@ import * as cartRepository from "../repositories/cartRepository.js";
 export const applyCoupon = (code: string) => {
   const cart = cartRepository.getCart();
 
-  if (code !== "SAVE10") {
+  if (code.toUpperCase() !== "SAVE10") {
     return {
       success: false,
       message: "Invalid coupon",
@@ -12,9 +12,14 @@ export const applyCoupon = (code: string) => {
 
   const discount = cart.subtotal * 0.1;
 
+  cartRepository.updateCoupon(
+    code.toUpperCase(),
+    discount
+  );
+
   return {
     success: true,
-    coupon: code,
+    coupon: code.toUpperCase(),
     discount,
     total: cart.subtotal - discount,
   };

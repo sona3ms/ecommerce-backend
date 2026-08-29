@@ -6,7 +6,9 @@ export const getCart = () => {
 };
 
 export const findItem = (productId: number) => {
-  return cart.items.find((item) => item.productId === productId);
+  return cart.items.find(
+    (item) => item.productId === productId
+  );
 };
 
 export const addItem = (item: CartItem) => {
@@ -32,6 +34,21 @@ export const updateQuantity = (
   return item;
 };
 
-export const updateSubtotal = (subtotal: number) => {
+export const updateSubtotal = (
+  subtotal: number
+) => {
   cart.subtotal = subtotal;
+};
+
+export const updateCoupon = (
+  couponCode: string,
+  discount: number
+) => {
+  cart.couponCode = couponCode;
+  cart.discount = discount;
+};
+
+export const clearCoupon = () => {
+  delete cart.couponCode;
+  cart.discount = 0;
 };

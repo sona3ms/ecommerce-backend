@@ -15,11 +15,13 @@ function Navbar() {
           <Link to="/">Home</Link>
           <Link to="/products">Products</Link>
           <Link to="/cart">Cart</Link>
+          <Link to="/orders">Orders</Link>
 
           {user && (
-            <Link to="/profile">
-              Profile
-            </Link>
+            <>
+              <Link to="/profile">Profile</Link>
+              <Link to="/addresses">Addresses</Link>
+            </>
           )}
         </nav>
 
@@ -52,6 +54,8 @@ function Navbar() {
               >
                 Sign Up
               </Link>
+
+
             </>
           )}
         </div>

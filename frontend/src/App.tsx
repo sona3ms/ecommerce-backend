@@ -3,19 +3,29 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
+
 import "./App.css";
+
 import Navbar from "./components/Navbar";
+
 import Products from "./pages/Products";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
+import Cart from "./pages/Cart";
+import Addresses from "./pages/Addresses";
+import Checkout from "./pages/Checkout";
+import Orders from "./pages/Orders";
 
 function Home() {
   return (
     <main className="home">
       <section className="hero">
         <div className="hero-content">
-          <p className="hero-tag">WELCOME TO OUR STORE</p>
+
+          <p className="hero-tag">
+            WELCOME TO OUR STORE
+          </p>
 
           <h1>
             Everything you love,
@@ -28,19 +38,15 @@ function Home() {
             Simple shopping, fast checkout.
           </p>
 
-          <a href="/products" className="primary-button">
+          <a
+            href="/products"
+            className="primary-button"
+          >
             Shop Now
           </a>
+
         </div>
       </section>
-    </main>
-  );
-}
-
-function Cart() {
-  return (
-    <main className="page">
-      <h1>Your Cart</h1>
     </main>
   );
 }
@@ -48,10 +54,15 @@ function Cart() {
 function App() {
   return (
     <BrowserRouter>
+
       <Navbar />
 
       <Routes>
-        <Route path="/" element={<Home />} />
+
+        <Route
+          path="/"
+          element={<Home />}
+        />
 
         <Route
           path="/products"
@@ -69,14 +80,32 @@ function App() {
         />
 
         <Route
+          path="/addresses"
+          element={<Addresses />}
+        />
+
+        <Route
           path="/cart"
           element={<Cart />}
         />
+
         <Route
-  path="/profile"
-  element={<Profile />}
-/>
+          path="/checkout"
+          element={<Checkout />}
+        />
+
+        <Route
+          path="/profile"
+          element={<Profile />}
+        />
+
+        <Route
+          path="/orders"
+          element={<Orders />}
+        />
+
       </Routes>
+
     </BrowserRouter>
   );
 }
