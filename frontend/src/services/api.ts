@@ -13,7 +13,12 @@ const getAuthHeaders = (): HeadersInit => {
 };
 
 export const getProducts = async () => {
-  const response = await fetch(`${API_URL}/products`);
+  const response = await fetch(
+    `${API_URL}/products`,
+    {
+      headers: getAuthHeaders(),
+    }
+  );
 
   if (!response.ok) {
     throw new Error("Failed to fetch products");
